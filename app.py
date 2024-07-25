@@ -15,7 +15,8 @@ from typing import List, Dict
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[ "http://vacad.veera-ai.com",
+    allow_origins=[ "https://vacad.veera-ai.com",
+                    "http://vacad.veera-ai.com",
                     "http://localhost:3000",
                     "https://visual-acad-ui-6c3f3d6893f4.herokuapp.com"],
     allow_credentials=True,
