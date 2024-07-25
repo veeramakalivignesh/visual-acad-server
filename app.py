@@ -15,8 +15,9 @@ from typing import List, Dict
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000",
-                   "https://visual-acad-ui-6c3f3d6893f4.herokuapp.com"],
+    allow_origins=[ "http://vacad.veera-ai.com",
+                    "http://localhost:3000",
+                    "https://visual-acad-ui-6c3f3d6893f4.herokuapp.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,6 +36,10 @@ llm1 = OpenAIILLM('gpt-3.5-turbo')
 llm2 = TogetherAILLM('llama3-70b')
 summarizing_agent = SummarizingAgent(llm1)
 drawing_agent = DrawingAgent(llm2)
+
+@app.get("/health")
+async def health():
+    return {"status": "up"}
 
 @app.post("/flow")
 async def get_mermaid(request: CodeRequest):
