@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from agents.summarizing_agent import SummarizingAgent
@@ -44,25 +44,44 @@ async def health():
 
 @app.post("/flow")
 async def get_mermaid(request: CodeRequest):
-    summary = summarizing_agent.get_result(request.code)
-    mermaid = drawing_agent.get_result(summary)
-    mermaid = utils.fix_mermaid(mermaid)
-    print(mermaid)
-    response_body = {
-        "mermaid": mermaid,
-        "summary": summary
-    }
-    return response_body
+    try:
+        summary = summarizing_agent.get_result(request.code)
+        mermaid = drawing_agent.get_result(summary)
+        mermaid = utils.fix_mermaid(mermaid)
+        print(mermaid)
+        response_body = {
+            "mermaid": mermaid,
+            "summary": summary
+        }
+        return response_body
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"{e}",
+        )
 
 @app.post("/chat")
 async def get_chat_response(request: ChatRequest):
-    chat_agent = ChatAgent(llm1, request.code, request.summary, request.mermaid)
-    response = chat_agent.get_result(request.messages)
-    response_body = {"content": response}
-    return response_body
+    try:
+        chat_agent = ChatAgent(llm1, request.code, request.summary, request.mermaid)
+        response = chat_agent.get_result(request.messages)
+        response_body = {"content": response}
+        return response_body
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"{e}",
+        )
+
 
 @app.post("/parse")
 async def get_parsed_code(request: CodeRequest):
-    parsed_code = utils.parse_code(request.code)
-    response_body = {"parsed_code": parsed_code}
-    return response_body
+    try:
+        parsed_code = utils.parse_code(request.code)
+        response_body = {"parsed_code": parsed_code}
+        return response_body
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"{e}",
+        )

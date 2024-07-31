@@ -96,9 +96,9 @@ def parse_code(code):
     
     skeleton = ast.unparse(new_tree)
     if skeleton != '':
-        code_list = [{
+        code_list.append({
             "name": "skeleton",
             "code": extract_skeleton(code_split, func_indices)
-        }] + code_list
+        })
     
     return code_list
