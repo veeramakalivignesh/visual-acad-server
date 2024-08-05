@@ -70,19 +70,14 @@ def extract_skeleton(code_split, func_indices):
 
 
 def parse_code(code):
-    # Parse the code into an AST
     global tree 
     tree = ast.parse(code)
 
     code_split = code.split('\n')
 
-    # Create an instance of the transformer
     transformer = FunctionExtractorRemover()
-
-    # Transform the tree (this also fills the functions list)
     new_tree = transformer.visit(tree)
-    
-    # Fix missing locations
+
     ast.fix_missing_locations(new_tree)
     
     code_list = []

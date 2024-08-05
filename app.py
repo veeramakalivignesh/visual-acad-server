@@ -78,10 +78,14 @@ async def get_chat_response(request: ChatRequest):
 async def get_parsed_code(request: CodeRequest):
     try:
         parsed_code = utils.parse_code(request.code)
-        response_body = {"parsed_code": parsed_code}
+        response_body = {"success": True, "parsed_code": parsed_code}
         return response_body
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"{e}",
-        )
+        response_body = {
+            "success": False,
+            "parsed_code": [{
+                "name": "skeleton",
+                "code": request.code
+            }]
+        }
+        return response_body
